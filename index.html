@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PeakRishabh – Fitness & Workout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0a0a; --surface: #111111; --card: #161616;
+      --accent: #e8ff00; --accent2: #ff4500;
+      --text: #f0f0f0; --muted: #777; --border: #222; --nav-h: 72px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; overflow-x: hidden; }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.3;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: var(--nav-h); display: flex; justify-content: space-between;
+      align-items: center; padding: 0 48px;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); transition: box-shadow 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+      letter-spacing: 0.12em; color: var(--accent); text-decoration: none;
+    }
+    .nav-logo span { color: #fff; }
+    .nav-links { display: flex; gap: 4px; list-style: none; align-items: center; }
+    .nav-links a {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+      font-size: 0.88rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; padding: 8px 14px;
+      border-radius: 4px; transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); background: rgba(232,255,0,0.06); }
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 22px; background: var(--accent); color: #000;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+      transition: background 0.2s, transform 0.15s; white-space: nowrap;
+    }
+    .nav-cta:hover { background: #fff; transform: translateY(-1px); }
+
+    /* HAMBURGER */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 8px; background: none; border: none; z-index: 210;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px; background: var(--text);
+      border-radius: 2px; transition: all 0.3s; transform-origin: center;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* MOBILE MENU */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; top: var(--nav-h);
+      background: rgba(10,10,10,0.98); backdrop-filter: blur(20px);
+      z-index: 190; flex-direction: column; justify-content: center;
+      align-items: center; gap: 12px; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem;
+      letter-spacing: 0.1em; color: var(--text); text-decoration: none;
+      opacity: 0; transform: translateY(20px);
+      transition: color 0.2s, opacity 0.4s, transform 0.4s;
+    }
+    .mobile-menu.open a { opacity: 1; transform: translateY(0); }
+    .mobile-menu.open a:nth-child(1) { transition-delay: 0.05s; }
+    .mobile-menu.open a:nth-child(2) { transition-delay: 0.1s; }
+    .mobile-menu.open a:nth-child(3) { transition-delay: 0.15s; }
+    .mobile-menu.open a:nth-child(4) { transition-delay: 0.22s; }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-menu .mobile-cta {
+      margin-top: 24px; display: inline-flex; align-items: center;
+      gap: 8px; padding: 14px 36px; background: var(--accent); color: #000;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 1.1rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; min-height: 100vh; display: flex;
+      flex-direction: column; justify-content: center;
+      padding: calc(var(--nav-h) + 60px) 48px 80px; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 70% 50%, rgba(232,255,0,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,69,0,0.08) 0%, transparent 60%), var(--bg);
+      z-index: 0;
+    }
+    .hero-line {
+      position: absolute; right: 0; top: 0; bottom: 0; width: 40%;
+      background: linear-gradient(135deg, transparent 49.5%, var(--border) 49.5%, var(--border) 50.5%, transparent 50.5%);
+      z-index: 0; pointer-events: none;
+    }
+    .hero-eyebrow {
+      position: relative; z-index: 1;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+      font-size: 0.85rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+      opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 32px; height: 2px;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .hero-title {
+      position: relative; z-index: 1;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4.5rem, 13vw, 12rem); line-height: 0.88;
+      letter-spacing: 0.02em; opacity: 0; animation: fadeUp 0.8s 0.35s forwards;
+    }
+    .hero-title .line2 { color: var(--accent); display: block; }
+    .hero-sub {
+      position: relative; z-index: 1;
+      font-size: clamp(1rem, 1.8vw, 1.15rem); font-weight: 300;
+      color: #aaa; max-width: 500px; margin-top: 28px; line-height: 1.75;
+      opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+    }
+    .hero-badges {
+      position: relative; z-index: 1; display: flex; flex-wrap: wrap;
+      gap: 10px; margin-top: 26px; opacity: 0; animation: fadeUp 0.8s 0.58s forwards;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      border: 1px solid var(--border); border-radius: 100px;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem;
+      font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+    .hero-cta {
+      position: relative; z-index: 1; display: flex; gap: 14px;
+      margin-top: 40px; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s 0.65s forwards;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px; padding: 15px 32px;
+      background: var(--accent); color: #000;
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+      font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,0,0.2); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px; padding: 15px 32px;
+      border: 1px solid var(--border); color: var(--text);
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+      font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    .stats-strip {
+      position: relative; z-index: 1; display: flex; gap: 0;
+      margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--border);
+      flex-wrap: wrap; opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+    }
+    .stat-item { padding-right: 40px; margin-right: 40px; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--accent); line-height: 1; }
+    .stat-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      z-index: 1; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; color: var(--muted); font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      opacity: 0; animation: fadeIn 1s 1.2s forwards;
+    }
+    .scroll-hint .arrow {
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, var(--muted), transparent);
+      animation: scrollPulse 2s infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: 0.4; } 50% { opacity: 1; }
+    }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
+      font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::before { content: ''; display: block; width: 20px; height: 2px; background: var(--accent); }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem); line-height: 0.95; letter-spacing: 0.02em;
+    }
+
+    /* PROGRAMS */
+    #programs {
+      padding: 100px 48px;
+      background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .programs-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; flex-wrap: wrap; gap: 24px; }
+    .programs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2px; }
+    .program-card {
+      background: var(--card); padding: 40px 32px; border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 14px;
+      transition: background 0.25s, transform 0.2s, border-color 0.25s; cursor: default;
+    }
+    .program-card:hover { background: #1c1c1c; border-color: rgba(232,255,0,0.25); transform: translateY(-3px); }
+    .program-icon { font-size: 2.2rem; line-height: 1; margin-bottom: 4px; }
+    .program-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.05em; line-height: 1; }
+    .program-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.65; flex: 1; }
+    .program-tag {
+      display: inline-block; padding: 4px 12px; border: 1px solid var(--border);
+      border-radius: 100px; font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); width: fit-content; transition: border-color 0.25s, color 0.25s;
+    }
+    .program-card:hover .program-tag { border-color: rgba(232,255,0,0.3); color: var(--accent); }
+
+    /* ABOUT */
+    #about { padding: 100px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual { position: relative; height: 420px; }
+    .about-box {
+      width: 100%; height: 100%; background: var(--card);
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .about-box-text { font-family: 'Bebas Neue', sans-serif; font-size: clamp(8rem,14vw,14rem); color: rgba(232,255,0,0.06); letter-spacing: 0.05em; user-select: none; }
+    .about-badge {
+      position: absolute; bottom: -20px; right: -20px; width: 110px; height: 110px;
+      background: var(--accent); border-radius: 50%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(232,255,0,0.25);
+    }
+    .about-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #000; line-height: 1; }
+    .about-badge-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #000; }
+    .about-content { display: flex; flex-direction: column; gap: 20px; }
+    .about-body { font-size: 1rem; color: #aaa; line-height: 1.75; }
+    .about-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin: 4px 0 8px; }
+    .about-list li { display: flex; align-items: center; gap: 12px; font-size: 0.95rem; }
+    .about-list li::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+    /* CONNECT */
+    #connect { padding: 100px 48px; background: var(--surface); border-top: 1px solid var(--border); text-align: center; }
+    .connect-sub { font-size: 1rem; color: var(--muted); max-width: 480px; margin: 16px auto 56px; line-height: 1.7; }
+    .social-cards { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .social-card {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      padding: 40px 36px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; text-decoration: none; color: var(--text); width: 200px;
+      transition: border-color 0.25s, transform 0.2s, background 0.25s, box-shadow 0.25s;
+    }
+    .social-card:hover { transform: translateY(-6px); background: #1a1a1a; border-color: var(--accent); box-shadow: 0 16px 40px rgba(232,255,0,0.1); }
+    .social-card.yt:hover { border-color: var(--accent2); box-shadow: 0 16px 40px rgba(255,69,0,0.12); }
+    .social-card.tg:hover { border-color: #29b6f6; box-shadow: 0 16px 40px rgba(41,182,246,0.12); }
+    
+    .social-icon { width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; }
+    
+    /* MODIFIED SOCIAL ICON COLORS HERE */
+    .social-icon svg { width: 32px; height: 32px; fill: var(--accent); transition: transform 0.25s; }
+    .social-card.yt .social-icon svg { fill: var(--accent2); }
+    .social-card.tg .social-icon svg { fill: #29b6f6; }
+    .social-card:hover .social-icon svg { transform: scale(1.15); }
+    
+    .social-platform { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.1em; }
+    .social-handle { font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--muted); transition: color 0.25s; }
+    .social-card:hover .social-handle { color: var(--accent); }
+    .social-card.yt:hover .social-handle { color: var(--accent2); }
+    .social-card.tg:hover .social-handle { color: #29b6f6; }
+    .social-visit { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: transparent; transition: color 0.25s; }
+    .social-card:hover .social-visit { color: var(--accent); }
+    .social-card.yt:hover .social-visit { color: var(--accent2); }
+    .social-card.tg:hover .social-visit { color: #29b6f6; }
+
+    /* FOOTER */
+    footer { padding: 40px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.12em; color: var(--accent); }
+    .footer-links { display: flex; gap: 24px; list-style: none; }
+    .footer-links a { font-family: 'Barlow Condensed', sans-serif; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); letter-spacing: 0.04em; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+      .hero { padding: calc(var(--nav-h) + 40px) 24px 60px; }
+      .stat-item { padding-right: 24px; margin-right: 24px; }
+      #programs { padding: 70px 24px; }
+      .programs-header { flex-direction: column; align-items: flex-start; }
+      #about { grid-template-columns: 1fr; padding: 70px 24px; gap: 48px; }
+      .about-visual { height: 280px; }
+      #connect { padding: 70px 24px; }
+      .social-card { width: 160px; padding: 28px 20px; }
+      footer { padding: 28px 24px; flex-direction: column; align-items: flex-start; }
+      .footer-links { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: clamp(3.5rem,18vw,5rem); }
+      .stats-strip { flex-direction: column; gap: 20px; }
+      .stat-item { border-right: none; padding-right: 0; margin-right: 0; }
+      .social-cards { justify-content: center; }
+      .hero-cta { flex-direction: column; }
+      .btn-primary, .btn-secondary { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">Peak<span>Rishabh</span></a>
+  <ul class="nav-links">
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#connect">Connect</a></li>
+  </ul>
+  <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="nav-cta">▶ Watch Now</a>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation menu">
+  <a href="#programs">Programs</a>
+  <a href="#about">About</a>
+  <a href="#connect">Connect</a>
+  <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="mobile-cta">▶ Watch on YouTube</a>
+</div>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <p class="hero-eyebrow">Train Hard. Live Harder.</p>
+  <h1 class="hero-title">PEAK<br><span class="line2">RISHABH</span></h1>
+  <p class="hero-sub">Fitness content, workout routines, and real-world training advice — built for people who want results, not excuses.</p>
+  <div class="hero-badges">
+    <span class="badge"><span class="dot"></span>Strength Training</span>
+    <span class="badge"><span class="dot"></span>HIIT & Cardio</span>
+    <span class="badge"><span class="dot"></span>Calisthenics</span>
+    <span class="badge"><span class="dot"></span>Nutrition Tips</span>
+  </div>
+  <div class="hero-cta">
+    <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="btn-primary">▶ Watch on YouTube</a>
+    <a href="https://www.instagram.com/peakrishabh?igsh=dXc4OTNwdm8xZzJy" target="_blank" class="btn-secondary">◉ Follow on Instagram</a>
+  </div>
+  <div class="stats-strip">
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Real Results</div></div>
+    <div class="stat-item"><div class="stat-num">0</div><div class="stat-label">Excuses</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Gains Ahead</div></div>
+    <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Days a Week</div></div>
+  </div>
+  <div class="scroll-hint"><span>Scroll</span><div class="arrow"></div></div>
+</section>
+
+<section id="programs">
+  <div class="programs-header reveal">
+    <div>
+      <p class="section-label">What I Offer</p>
+      <h2 class="section-title">WORKOUT<br>PROGRAMS</h2>
+    </div>
+    <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="btn-secondary">View All on YouTube →</a>
+  </div>
+  <div class="programs-grid">
+    <div class="program-card reveal">
+      <div class="program-icon">🏋️</div>
+      <div class="program-title">Strength Building</div>
+      <p class="program-desc">Progressive overload techniques and compound movements to build serious muscle and raw power.</p>
+      <span class="program-tag">Intermediate</span>
+    </div>
+    <div class="program-card reveal" style="transition-delay:0.08s">
+      <div class="program-icon">🔥</div>
+      <div class="program-title">Fat Burn HIIT</div>
+      <p class="program-desc">High-intensity interval sessions designed to torch calories and boost your metabolism all day.</p>
+      <span class="program-tag">All Levels</span>
+    </div>
+    <div class="program-card reveal" style="transition-delay:0.16s">
+      <div class="program-icon">💪</div>
+      <div class="program-title">Calisthenics</div>
+      <p class="program-desc">Master your own bodyweight — from basics to advanced moves like muscle-ups and levers.</p>
+      <span class="program-tag">Beginner Friendly</span>
+    </div>
+    <div class="program-card reveal" style="transition-delay:0.24s">
+      <div class="program-icon">🧘</div>
+      <div class="program-title">Recovery & Mobility</div>
+      <p class="program-desc">Stretch, recover and rebuild. The overlooked side of fitness that separates good athletes from great ones.</p>
+      <span class="program-tag">Essential</span>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="about-visual reveal">
+    <div class="about-box"><span class="about-box-text">PEAK</span></div>
+    <div class="about-badge"><span class="about-badge-num">No</span><span class="about-badge-label">Shortcuts</span></div>
+  </div>
+  <div class="about-content reveal" style="transition-delay:0.15s">
+    <p class="section-label">The Mission</p>
+    <h2 class="section-title">TRAINING THAT<br>ACTUALLY WORKS</h2>
+    <p class="about-body">I'm Rishabh — and PeakRishabh is where I document the grind. Every workout, every meal, every lesson learned the hard way.</p>
+    <p class="about-body">No fluff, no fake transformations. Just consistent, evidence-backed fitness content to help you build the body and mindset you want.</p>
+    <ul class="about-list">
+      <li>Weekly workout routines on YouTube</li>
+      <li>Daily fitness motivation on Instagram</li>
+      <li>Nutrition tips & lifestyle content</li>
+      <li>Community built on real progress</li>
+    </ul>
+    <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="btn-primary">Start Your Journey →</a>
+  </div>
+</section>
+
+<section id="connect">
+  <p class="section-label reveal" style="justify-content:center">Find Me Online</p>
+  <h2 class="section-title reveal" style="text-align:center;transition-delay:0.05s">LET'S CONNECT</h2>
+  <p class="connect-sub reveal" style="transition-delay:0.1s">Follow the journey, get daily motivation, and never miss a new workout drop.</p>
+  <div class="social-cards">
+    <a href="https://www.instagram.com/peakrishabh?igsh=dXc4OTNwdm8xZzJy" target="_blank" class="social-card reveal" style="transition-delay:0.05s">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </div>
+      <span class="social-platform">INSTAGRAM</span>
+      <span class="social-handle">@peakrishabh</span>
+      <span class="social-visit">Visit →</span>
+    </a>
+    <a href="https://www.youtube.com/@peakrishabh" target="_blank" class="social-card yt reveal" style="transition-delay:0.12s">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+      </div>
+      <span class="social-platform">YOUTUBE</span>
+      <span class="social-handle">@peakrishabh</span>
+      <span class="social-visit">Visit →</span>
+    </a>
+    <a href="https://t.me/peakrishabh" target="_blank" class="social-card tg reveal" style="transition-delay:0.19s">
+      <div class="social-icon">
+        <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </div>
+      <span class="social-platform">TELEGRAM</span>
+      <span class="social-handle">@peakrishabh</span>
+      <span class="social-visit">Visit →</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">PEAKRISHABH</span>
+  <ul class="footer-links">
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#connect">Connect</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 PeakRishabh · Built for the Grind</span>
+</footer>
+
+<script>
+  // Hamburger toggle
+  const btn = document.getElementById('hamburger');
+  const menu = document.getElementById('mobileMenu');
+  btn.addEventListener('click', () => {
+    const open = btn.classList.toggle('open');
+    menu.classList.toggle('open', open);
+    btn.setAttribute('aria-expanded', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    btn.classList.remove('open');
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', false);
+    document.body.style.overflow = '';
+  }));
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Nav shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.boxShadow = window.scrollY > 20 ? '0 4px 30px rgba(0,0,0,0.5)' : '';
+  });
+</script>
+</body>
+</html>
